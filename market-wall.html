@@ -439,7 +439,10 @@ function buildTicker(){
   var tr=$('tickTrack');if(!tr)return;
   var one=TICKER.map(tkItem).join('');
   tr.innerHTML=one+one;  /* duplicate for seamless loop */
-  tr.style.setProperty('--tdur',Math.max(40,Math.round(tr.scrollWidth/2/55))+'s');
+  var cont=tr.parentElement?tr.parentElement.clientWidth:1920;
+  var half=tr.scrollWidth/2;
+  if(half>0&&half<cont){var reps=Math.ceil(cont/half)*2;var full='';for(var i=0;i<reps;i++)full+=one;tr.innerHTML=full;half=tr.scrollWidth/2;}
+  tr.style.setProperty('--tdur',Math.max(30,Math.round(half/55))+'s');
 }
 /* update prices/pct in place (no innerHTML rebuild) so the marquee never jumps */
 function renderTicker(){
@@ -746,9 +749,13 @@ async function pollNews(){
       var top=items.slice(0,20),tr=$('newsStrip');
       if(tr){
         tr.classList.remove('run');
-        tr.innerHTML=top.map(ncard).join('')+top.map(ncard).join('');
-        /* same constant speed as the top ticker (55 px/s) */
-        tr.style.setProperty('--ndur',Math.max(40,Math.round(tr.scrollWidth/2/55))+'s');
+        var one=top.map(ncard).join('');
+        tr.innerHTML=one+one;
+        /* repeat enough so each half always fills the screen (no empty gap when few items) */
+        var cont=tr.parentElement?tr.parentElement.clientWidth:1920;
+        var half=tr.scrollWidth/2;
+        if(half>0&&half<cont){var reps=Math.ceil(cont/half)*2;var full='';for(var i=0;i<reps;i++)full+=one;tr.innerHTML=full;half=tr.scrollWidth/2;}
+        tr.style.setProperty('--ndur',Math.max(40,Math.round(half/55))+'s');  /* 55 px/s, same as ticker */
         void tr.offsetWidth;
         tr.classList.add('run');
       }

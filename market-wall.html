@@ -18,7 +18,7 @@
   html,body{height:100%;width:100%}
   body{background:#000;color:var(--fg);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
   /* fixed 1920x1080 stage, scaled to fit any display -> identical proportions everywhere */
-  .app{width:1920px;height:1080px;transform-origin:top left;position:absolute;top:0;left:0;display:grid;grid-template-rows:60px 72px 1fr 158px;gap:12px;padding:13px;background:var(--bg)}
+  .app{width:1920px;height:1080px;transform-origin:top left;position:absolute;top:0;left:0;display:grid;grid-template-rows:60px 80px 1fr 110px;gap:12px;padding:13px;background:var(--bg)}
 
   /* header */
   .head{display:flex;align-items:center;justify-content:space-between;padding:0 8px}
@@ -38,9 +38,9 @@
   .tick-track{display:flex;align-items:center;height:100%;width:max-content;animation:tmarq var(--tdur,46s) linear infinite;will-change:transform}
   @keyframes tmarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   .tk{display:flex;align-items:center;gap:14px;padding:0 30px;height:100%;border-right:1px solid var(--line-2);white-space:nowrap}
-  .tk .nm{font-weight:800;font-size:23px}
-  .tk .pr{font-weight:700;font-size:23px;color:var(--fg)}
-  .tk .ch{font-weight:800;font-size:20px;display:flex;align-items:center;gap:5px}
+  .tk .nm{font-weight:800;font-size:26px}
+  .tk .pr{font-weight:700;font-size:26px;color:var(--fg)}
+  .tk .ch{font-weight:800;font-size:22px;display:flex;align-items:center;gap:6px}
   .up{color:var(--up)} .down{color:var(--down)}
 
   /* main 3 cols */
@@ -81,11 +81,11 @@
 
   /* asia cards */
   .asia{gap:0;justify-content:stretch}
-  .acard{padding:8px 20px;border-top:1px solid var(--line-2);display:flex;flex-direction:column;justify-content:center;gap:5px;flex:1;min-height:0;overflow:hidden}
+  .acard{padding:8px 22px;border-top:1px solid var(--line-2);display:flex;flex-direction:column;justify-content:center;gap:6px;flex:1;min-height:0;overflow:hidden}
   .acard:first-of-type{border-top:0}
-  .acard .nm{font-weight:700;font-size:15px;color:var(--muted);letter-spacing:.03em}
-  .acard .val{font-weight:800;font-size:34px;line-height:1}
-  .acard .pill{align-self:flex-start;font-size:15px;padding:5px 12px}
+  .acard .nm{font-weight:700;font-size:17px;color:var(--muted);letter-spacing:.03em}
+  .acard .val{font-weight:800;font-size:40px;line-height:1}
+  .acard .pill{align-self:flex-start;font-size:17px;padding:6px 14px}
   .pill{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:15px;padding:6px 12px;border-radius:9px}
   .pill.up{background:var(--up-bg);color:var(--up);box-shadow:0 0 0 1px rgba(23,201,131,.3) inset}
   .pill.down{background:var(--down-bg);color:var(--down);box-shadow:0 0 0 1px rgba(255,59,71,.3) inset}
@@ -215,27 +215,28 @@
 
   /* macro */
   .macro{flex:1;min-height:0}
-  .mhead{display:grid;grid-template-columns:1fr 70px 80px;gap:8px;padding:7px 16px;color:var(--faint);font-weight:700;font-size:12px;letter-spacing:.09em}
+  .macro{flex:1.3;min-height:0}
+  .mhead{display:grid;grid-template-columns:1fr 78px 88px;gap:8px;padding:8px 18px;color:var(--faint);font-weight:700;font-size:13px;letter-spacing:.09em}
   .mhead .r{text-align:right}
-  .mbody{overflow:hidden;flex:1;min-height:0}
-  .mrow{display:grid;grid-template-columns:1fr 70px 80px;gap:8px;align-items:center;padding:4px 16px;border-top:1px solid var(--line-2)}
-  .mrow .ev{display:flex;align-items:flex-start;gap:9px;min-width:0}
-  .mrow .pr-dot{width:9px;height:9px;border-radius:50%;background:var(--down);margin-top:5px;flex:0 0 auto}
+  .mbody{overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around}
+  .mrow{display:grid;grid-template-columns:1fr 78px 88px;gap:8px;align-items:center;padding:7px 18px;border-top:1px solid var(--line-2)}
+  .mrow .ev{display:flex;align-items:flex-start;gap:11px;min-width:0}
+  .mrow .pr-dot{width:11px;height:11px;border-radius:50%;background:var(--down);margin-top:6px;flex:0 0 auto}
   .mrow .evt{min-width:0}
-  .mrow .t1{font-weight:700;font-size:12px;color:var(--muted)}
+  .mrow .t1{font-weight:700;font-size:13.5px;color:var(--muted)}
   .mrow .t1 b{color:var(--accent);font-weight:800;letter-spacing:.04em}
-  .mrow .t2{font-weight:800;font-size:14.5px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .mrow .a{text-align:right;font-weight:800;font-size:16px;color:var(--muted)}
+  .mrow .t2{font-weight:800;font-size:16.5px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mrow .a{text-align:right;font-weight:800;font-size:18px;color:var(--muted)}
   .mrow.done .a{color:var(--up)}
-  .mrow .f{text-align:right;font-weight:800;font-size:16px;color:var(--muted)}
+  .mrow .f{text-align:right;font-weight:800;font-size:18px;color:var(--muted)}
 
   /* central bank rates */
-  .cbrates{flex:0 0 auto}
-  .cbr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;padding:2px 14px 7px}
-  .cbr{display:flex;align-items:center;justify-content:space-between;padding:4px 2px;border-top:1px solid var(--line-2)}
+  .cbrates{flex:1;min-height:0}
+  .cbr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding:2px 16px 8px;flex:1;min-height:0;align-content:space-around}
+  .cbr{display:flex;align-items:center;justify-content:space-between;padding:6px 2px;border-top:1px solid var(--line-2)}
   .cbr-grid .cbr:nth-child(-n+2){border-top:0}
-  .cbr .c{font-weight:800;font-size:15px;letter-spacing:.04em;color:var(--fg)}
-  .cbr .r{font-weight:800;font-size:15px;color:var(--up);background:var(--up-bg);padding:3px 10px;border-radius:7px;min-width:60px;text-align:right}
+  .cbr .c{font-weight:800;font-size:17px;letter-spacing:.04em;color:var(--fg)}
+  .cbr .r{font-weight:800;font-size:17px;color:var(--up);background:var(--up-bg);padding:4px 12px;border-radius:7px;min-width:70px;text-align:right}
   .cbr .r.low{color:var(--muted);background:#141922}
 
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -246,16 +247,16 @@
   .newsbar::after{content:"";position:absolute;top:0;bottom:0;right:0;width:70px;z-index:3;background:linear-gradient(270deg,var(--panel),transparent);pointer-events:none}
   .newsbar .lbl{position:absolute;top:0;bottom:0;left:0;z-index:4;display:flex;align-items:center;gap:9px;padding:0 20px 0 18px;background:linear-gradient(90deg,var(--panel) 78%,transparent);font-weight:800;font-size:13px;letter-spacing:.12em;color:var(--live)}
   .newsbar .lbl .d{width:9px;height:9px;border-radius:50%;background:var(--live);box-shadow:0 0 9px var(--live);animation:pulse 1.4s infinite}
-  .news-track{display:flex;gap:14px;align-items:center;height:100%;padding:0 18px 0 158px;width:max-content;will-change:transform}
+  .news-track{display:flex;gap:12px;align-items:center;height:100%;padding:0 18px 0 150px;width:max-content;will-change:transform}
   .news-track.run{animation:nmarq var(--ndur,70s) linear infinite}
-  .ncard{flex:0 0 460px;display:flex;gap:14px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:11px;padding:11px;height:128px;align-items:center}
-  .ncard .nimg{flex:0 0 150px;height:100%;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,#1c2634,#0e1420);display:flex;align-items:center;justify-content:center}
+  .ncard{flex:0 0 430px;display:flex;gap:11px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:10px;padding:8px;height:86px;align-items:center}
+  .ncard .nimg{flex:0 0 108px;height:100%;border-radius:7px;overflow:hidden;background:linear-gradient(135deg,#1c2634,#0e1420);display:flex;align-items:center;justify-content:center}
   .ncard .nimg img{width:100%;height:100%;object-fit:cover}
-  .ncard .nimg .ph{font-weight:800;font-size:24px;color:var(--faint)}
-  .ncard .nb{min-width:0;display:flex;flex-direction:column;gap:6px}
-  .ncard .ns{font-weight:800;font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
+  .ncard .nimg .ph{font-weight:800;font-size:20px;color:var(--faint)}
+  .ncard .nb{min-width:0;display:flex;flex-direction:column;gap:4px}
+  .ncard .ns{font-weight:800;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
   .ncard .ns .tm{color:var(--faint)}
-  .ncard .nt{font-weight:700;font-size:18px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .ncard .nt{font-weight:700;font-size:14px;line-height:1.28;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   @keyframes nmarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 </style>
 </head>
@@ -290,10 +291,6 @@
           <div class="hl" id="chyHL">&nbsp;</div>
           <div class="bk"><div class="tag">BREAKING NEWS</div><div class="scrollwrap"><div class="scroll" id="chyScroll"></div></div></div>
         </div>
-      </div>
-      <div class="charts">
-        <div class="mc"><div class="top"><span class="sym">DXY</span><span class="val" id="dxyVal">—</span><span class="chg" id="dxyChg"></span></div><canvas id="dxyCv"></canvas></div>
-        <div class="mc"><div class="top"><span class="sym">BTCUSD</span><span class="val" id="btcVal">—</span><span class="chg" id="btcChg"></span></div><canvas id="btcCv"></canvas></div>
       </div>
     </div>
 
@@ -358,24 +355,10 @@
               </div>
             </div>
             <div class="b-row">
-              <div class="b-name">GOLD 995</div>
-              <div class="b-cell">
-                <div class="b-price val-neutral" id="cb-995">460287</div>
-                <div class="b-hl" id="cb-995-hl">H: 462872 | L: 456897</div>
-              </div>
-            </div>
-            <div class="b-row">
               <div class="b-name">GOLD 9999</div>
               <div class="b-cell">
                 <div class="b-price val-neutral" id="cb-9999">461963</div>
                 <div class="b-hl" id="cb-9999-hl">H: 464560 | L: 458546</div>
-              </div>
-            </div>
-            <div class="b-row">
-              <div class="b-name">GOLD TT BAR</div>
-              <div class="b-cell">
-                <div class="b-price val-neutral" id="cb-tt">53862</div>
-                <div class="b-hl" id="cb-tt-hl">H: 54165 | L: 53464</div>
               </div>
             </div>
           </div>
@@ -576,14 +559,8 @@ function renderBullion() {
   setBullionVal('cb-1gm',  gm1,   2);
   $('cb-1gm-hl').textContent  = 'H: ' + gm1H.toFixed(2) + ' | L: ' + gm1L.toFixed(2);
 
-  setBullionVal('cb-995',  g995,  0);
-  $('cb-995-hl').textContent  = 'H: ' + Math.round(g995H) + ' | L: ' + Math.round(g995L);
-
   setBullionVal('cb-9999', g9999, 0);
   $('cb-9999-hl').textContent = 'H: ' + Math.round(g9999H) + ' | L: ' + Math.round(g9999L);
-
-  setBullionVal('cb-tt',   gtt,   0);
-  $('cb-tt-hl').textContent   = 'H: ' + Math.round(gttH) + ' | L: ' + Math.round(gttL);
 }
 
 /* Listen for direct live DOM messages from /proxy/classicbullion iframe */
@@ -683,6 +660,7 @@ function drawArea(cv,series,up){
   x.beginPath();series.forEach(function(v,i){var X=px(i),Y=py(v);i?x.lineTo(X,Y):x.moveTo(X,Y);});x.strokeStyle=col;x.lineWidth=2;x.stroke();
 }
 function renderCharts(){
+  if(!$('dxyCv'))return;   /* mini-charts removed; nothing to draw */
   var d=Q['DX-Y.NYB']||{},b=Q['BTC-USD']||{};
   var du=(d.pct||0)>=0,bu=(b.pct||0)>=0;
   $('dxyVal').textContent=fmt(d.price,3);$('dxyChg').textContent=arrow(d.pct||0)+' '+pctTxt(d.pct);$('dxyChg').className='chg '+(du?'up':'down');
@@ -720,7 +698,7 @@ async function pollCalendar(){
     var r=await fetch('/api/calendar',{cache:'no-store'});if(!r.ok)return;var rows=await r.json();
     if(!rows||!rows.length)return;
     var today=new Date().toDateString();
-    $('macro').innerHTML=rows.slice(0,2).map(function(e){
+    $('macro').innerHTML=rows.slice(0,3).map(function(e){
       var d=e.date?new Date(e.date):null;
       var t=d?d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'';
       var day=d?(d.toDateString()===today?'TODAY':d.toLocaleDateString('en-GB',{weekday:'short'}).toUpperCase()):'';

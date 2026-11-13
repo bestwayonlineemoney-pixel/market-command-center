@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: market-command-center
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python wall-server.py"
+    autoDeploy: true

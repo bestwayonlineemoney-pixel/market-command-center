@@ -81,11 +81,11 @@
 
   /* asia cards */
   .asia{gap:0;justify-content:stretch}
-  .acard{padding:8px 22px;border-top:1px solid var(--line-2);display:flex;flex-direction:column;justify-content:center;gap:6px;flex:1;min-height:0;overflow:hidden}
+  .acard{padding:0 20px;border-top:1px solid var(--line-2);display:flex;flex-direction:row;align-items:center;gap:12px;flex:1;min-height:0;overflow:hidden}
   .acard:first-of-type{border-top:0}
-  .acard .nm{font-weight:700;font-size:17px;color:var(--muted);letter-spacing:.03em}
-  .acard .val{font-weight:800;font-size:40px;line-height:1}
-  .acard .pill{align-self:flex-start;font-size:17px;padding:6px 14px}
+  .acard .nm{font-weight:700;font-size:15px;color:var(--muted);letter-spacing:.02em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .acard .val{font-weight:800;font-size:26px;line-height:1}
+  .acard .pill{font-size:14px;padding:5px 11px;min-width:82px;justify-content:center}
   .pill{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:15px;padding:6px 12px;border-radius:9px}
   .pill.up{background:var(--up-bg);color:var(--up);box-shadow:0 0 0 1px rgba(23,201,131,.3) inset}
   .pill.down{background:var(--down-bg);color:var(--down);box-shadow:0 0 0 1px rgba(255,59,71,.3) inset}
@@ -238,6 +238,8 @@
   .cbr .c{font-weight:800;font-size:17px;letter-spacing:.04em;color:var(--fg)}
   .cbr .r{font-weight:800;font-size:17px;color:var(--up);background:var(--up-bg);padding:4px 12px;border-radius:7px;min-width:70px;text-align:right}
   .cbr .r.low{color:var(--muted);background:#141922}
+  .flag{width:26px;height:18px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:9px;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
+  .mrow .t1 .flag{width:20px;height:14px;margin-right:6px;margin-left:2px}
 
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
   .dim{color:var(--faint)}
@@ -294,15 +296,20 @@
       </div>
     </div>
 
-    <!-- COL 2: asia -->
+    <!-- COL 2: macro + central bank rates -->
     <div class="col">
-      <div class="panel asia" style="flex:1">
-        <div class="ptitle">ASIA STOCKS INTRADAY</div>
-        <div id="asia" style="display:flex;flex-direction:column;flex:1;min-height:0"></div>
+      <div class="panel macro" style="flex:1.25">
+        <div class="ptitle">MACRO ECONOMIC CALENDAR</div>
+        <div class="mhead"><span>PRIORITY</span><span class="r">ACTUAL</span><span class="r">FORECAST</span></div>
+        <div class="mbody" id="macro"></div>
+      </div>
+      <div class="panel cbrates" style="flex:1">
+        <div class="ptitle">CENTRAL BANK RATES</div>
+        <div class="cbr-grid" id="cbrGrid"></div>
       </div>
     </div>
 
-    <!-- COL 3: CLASSIC BULLION LIVE RATES + MACRO -->
+    <!-- COL 3: CLASSIC BULLION + ASIA STOCKS -->
     <div class="col">
       <div class="bullion-panel">
         <div class="ptitle">
@@ -370,14 +377,9 @@
         </div>
       </div>
 
-      <div class="panel macro" style="flex:1">
-        <div class="ptitle">MACRO ECONOMIC CALENDAR</div>
-        <div class="mhead"><span>PRIORITY</span><span class="r">ACTUAL</span><span class="r">FORECAST</span></div>
-        <div class="mbody" id="macro"></div>
-      </div>
-      <div class="panel cbrates">
-        <div class="ptitle">CENTRAL BANK RATES</div>
-        <div class="cbr-grid" id="cbrGrid"></div>
+      <div class="panel asia" style="flex:1">
+        <div class="ptitle">ASIA STOCKS INTRADAY</div>
+        <div id="asia" style="display:flex;flex-direction:column;flex:1;min-height:0"></div>
       </div>
     </div>
   </div>
@@ -698,19 +700,23 @@ async function pollCalendar(){
     var r=await fetch('/api/calendar',{cache:'no-store'});if(!r.ok)return;var rows=await r.json();
     if(!rows||!rows.length)return;
     var today=new Date().toDateString();
-    $('macro').innerHTML=rows.slice(0,3).map(function(e){
+    $('macro').innerHTML=rows.slice(0,5).map(function(e){
       var d=e.date?new Date(e.date):null;
       var t=d?d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'';
       var day=d?(d.toDateString()===today?'TODAY':d.toLocaleDateString('en-GB',{weekday:'short'}).toUpperCase()):'';
       var done=e.actual!=null&&e.actual!=='';
       var cur=CUR[e.country]||e.country||'';
       return '<div class="mrow'+(done?' done':'')+'"><div class="ev"><div class="pr-dot"></div><div class="evt">'+
-        '<div class="t1"><b>'+esc(day)+'</b> '+esc(t)+' &middot; '+esc(cur)+'</div><div class="t2">'+esc(e.title||'')+'</div></div></div>'+
+        '<div class="t1"><b>'+esc(day)+'</b> '+esc(t)+' &middot; '+flag(e.country)+esc(cur)+'</div><div class="t2">'+esc(e.title||'')+'</div></div></div>'+
         '<div class="a">'+fmtVal(e.actual,e.unit)+'</div><div class="f">'+fmtVal(e.forecast,e.unit)+'</div></div>';
     }).join('');
   }catch(e){}
 }
 pollCalendar();setInterval(pollCalendar,15*60*1000);
+
+/* ---------------- country flags (currency code -> ISO country for flagcdn) ---------------- */
+var CC2={USD:'us',EUR:'eu',GBP:'gb',JPY:'jp',CNY:'cn',CAD:'ca',AUD:'au',CHF:'ch',NZD:'nz'};
+function flag(cur){var c=CC2[(cur||'').toUpperCase()];return c?'<img class="flag" src="https://flagcdn.com/w40/'+c+'.png" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">':'';}
 
 /* ---------------- central bank policy rates ---------------- */
 var CBR=[['AUD','4.85'],['USD','4.00'],['GBP','4.00'],['NZD','2.75'],['EUR','2.65'],['CAD','2.50'],['JPY','0.50'],['CHF','0.00']];
@@ -718,7 +724,7 @@ function renderCBR(){
   var g=$('cbrGrid');if(!g)return;
   g.innerHTML=CBR.map(function(x){
     var low=parseFloat(x[1])<=0.5;
-    return '<div class="cbr"><span class="c">'+x[0]+'</span><span class="r'+(low?' low':'')+'">'+x[1]+'%</span></div>';
+    return '<div class="cbr"><span class="c">'+flag(x[0])+x[0]+'</span><span class="r'+(low?' low':'')+'">'+x[1]+'%</span></div>';
   }).join('');
 }
 renderCBR();

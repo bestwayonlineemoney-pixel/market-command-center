@@ -230,13 +230,25 @@
   .mrow .f{text-align:right;font-weight:800;font-size:18px;color:var(--muted)}
 
   /* central bank rates */
-  .cbrates{flex:1;min-height:0}
-  .cbr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding:2px 16px 8px;flex:1;min-height:0;align-content:space-around}
-  .cbr{display:flex;align-items:center;justify-content:space-between;padding:6px 2px;border-top:1px solid var(--line-2)}
-  .cbr-grid .cbr:nth-child(-n+2){border-top:0}
-  .cbr .c{font-weight:800;font-size:17px;letter-spacing:.04em;color:var(--fg)}
-  .cbr .r{font-weight:800;font-size:17px;color:var(--up);background:var(--up-bg);padding:4px 12px;border-radius:7px;min-width:70px;text-align:right}
-  .cbr .r.low{color:var(--muted);background:#141922}
+  /* global events panel */
+  .events{flex:1;min-height:0}
+  .ev-list{overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;padding:2px 0}
+  .erow{display:flex;align-items:center;gap:13px;padding:6px 16px;border-top:1px solid var(--line-2)}
+  .erow:first-child{border-top:0}
+  .edate{flex:0 0 52px;text-align:center;background:#11151d;border:1px solid var(--line);border-radius:9px;padding:5px 2px;line-height:1.05}
+  .edate b{display:block;font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.06em}
+  .edate i{display:block;font-size:19px;font-weight:900;font-style:normal;color:var(--fg)}
+  .edate.soon b{color:var(--down)}
+  .einfo{min-width:0;flex:1}
+  .et{display:flex;align-items:center;gap:8px;min-width:0}
+  .etag{font-size:10px;font-weight:900;letter-spacing:.06em;padding:3px 7px;border-radius:5px;flex:0 0 auto;text-transform:uppercase}
+  .etag.summit{background:rgba(240,180,41,.16);color:var(--gold)}
+  .etag.forum{background:rgba(90,150,255,.16);color:#6fa8ff}
+  .etag.peace{background:var(--up-bg);color:var(--up)}
+  .etag.deal{background:rgba(190,120,255,.16);color:#c79bff}
+  .etag.meeting{background:#1b2230;color:var(--muted)}
+  .et .name{font-weight:800;font-size:15.5px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .eloc{font-weight:600;font-size:12.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .flag{width:26px;height:18px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:9px;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
   .mrow .t1 .flag{width:20px;height:14px;margin-right:6px;margin-left:2px}
 
@@ -299,9 +311,9 @@
         <div class="mhead"><span>PRIORITY</span><span class="r">ACTUAL</span><span class="r">FORECAST</span></div>
         <div class="mbody" id="macro"></div>
       </div>
-      <div class="panel cbrates" style="flex:1">
-        <div class="ptitle">CENTRAL BANK RATES</div>
-        <div class="cbr-grid" id="cbrGrid"></div>
+      <div class="panel events" style="flex:1">
+        <div class="ptitle">GLOBAL EVENTS &middot; SUMMITS &amp; TALKS</div>
+        <div class="ev-list" id="events"></div>
       </div>
     </div>
 
@@ -772,16 +784,33 @@ pollCalendar();setInterval(pollCalendar,15*60*1000);
 var CC2={USD:'us',EUR:'eu',GBP:'gb',JPY:'jp',CNY:'cn',CAD:'ca',AUD:'au',CHF:'ch',NZD:'nz'};
 function flag(cur){var c=CC2[(cur||'').toUpperCase()];return c?'<img class="flag" src="https://flagcdn.com/w40/'+c+'.png" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">':'';}
 
-/* ---------------- central bank policy rates ---------------- */
-var CBR=[['AUD','4.85'],['USD','4.00'],['GBP','4.00'],['NZD','2.75'],['EUR','2.65'],['CAD','2.50'],['JPY','0.50'],['CHF','0.00']];
-function renderCBR(){
-  var g=$('cbrGrid');if(!g)return;
-  g.innerHTML=CBR.map(function(x){
-    var low=parseFloat(x[1])<=0.5;
-    return '<div class="cbr"><span class="c">'+flag(x[0])+x[0]+'</span><span class="r'+(low?' low':'')+'">'+x[1]+'%</span></div>';
-  }).join('');
+/* ---------------- global events (summits, forums, peace talks, deals) ---------------- */
+function etype(t){t=(t||'').toLowerCase();
+  if(t.indexOf('peace')>=0||t.indexOf('talks')>=0)return 'peace';
+  if(t.indexOf('forum')>=0)return 'forum';
+  if(t.indexOf('deal')>=0||t.indexOf('trade')>=0)return 'deal';
+  if(t.indexOf('summit')>=0)return 'summit';
+  return 'meeting';}
+async function pollEvents(){
+  try{
+    var r=await fetch('/api/events',{cache:'no-store'});if(!r.ok)return;var rows=await r.json();
+    var box=$('events');if(!box)return;
+    if(!rows||!rows.length){box.innerHTML='';return;}
+    var now=new Date(); now.setHours(0,0,0,0);
+    box.innerHTML=rows.slice(0,6).map(function(e){
+      var d=e.date?new Date(e.date):null;
+      var mon=d?d.toLocaleDateString('en-GB',{month:'short'}).toUpperCase():'';
+      var day=d?d.toLocaleDateString('en-GB',{day:'2-digit'}):'';
+      var soon=d?((d-now)/86400000)<=7:false;
+      var cls=etype(e.type);
+      var label=(e.type||'Meeting').toUpperCase();
+      return '<div class="erow"><div class="edate'+(soon?' soon':'')+'"><b>'+esc(mon)+'</b><i>'+esc(day)+'</i></div>'+
+        '<div class="einfo"><div class="et"><span class="etag '+cls+'">'+esc(label)+'</span><span class="name">'+esc(e.title||'')+'</span></div>'+
+        '<div class="eloc">'+esc(e.loc||'')+'</div></div></div>';
+    }).join('');
+  }catch(e){}
 }
-renderCBR();
+pollEvents();setInterval(pollEvents,30*60*1000);
 
 /* ---------------- news chyron & bottom strip (FASTER SCROLL SPEED) ---------------- */
 var NEWS=[],ci=0;

@@ -247,6 +247,7 @@
   .etag.peace{background:var(--up-bg);color:var(--up)}
   .etag.deal{background:rgba(190,120,255,.16);color:#c79bff}
   .etag.meeting{background:#1b2230;color:var(--muted)}
+  .etag.speech{background:rgba(80,200,214,.16);color:#5fd0db}
   .et .name{font-weight:800;font-size:15.5px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .eloc{font-weight:600;font-size:12.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .flag{width:26px;height:18px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:9px;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
@@ -786,6 +787,7 @@ function flag(cur){var c=CC2[(cur||'').toUpperCase()];return c?'<img class="flag
 
 /* ---------------- global events (summits, forums, peace talks, deals) ---------------- */
 function etype(t){t=(t||'').toLowerCase();
+  if(t.indexOf('speech')>=0||t.indexOf('speak')>=0)return 'speech';
   if(t.indexOf('peace')>=0||t.indexOf('talks')>=0)return 'peace';
   if(t.indexOf('forum')>=0)return 'forum';
   if(t.indexOf('deal')>=0||t.indexOf('trade')>=0)return 'deal';

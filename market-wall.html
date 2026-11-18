@@ -402,12 +402,13 @@ function setCbView(mode){
    Tries Bloomberg first; if a stream is unavailable / not embeddable / not live,
    the YouTube IFrame API fires onError (or it never starts within 9s) and we
    automatically rotate to the next 24/7 finance live channel. */
-var YT_CH=[['Bloomberg','UCIALMKvObZNtJ6AmdCLP7Lg'],
-           ['Yahoo Finance','UCEAZeUIeJs0IjQiqTCdVSIg'],
-           ['CNBC','UCrp_UI8XtuYfpiqluWLD7Lw'],
-           ['CNBC','UCvJJ_dzjViJCoLf5uKUTwoA']];
+/* Bloomberg only: try both embed domains and keep retrying Bloomberg's live stream */
+var BB='UCIALMKvObZNtJ6AmdCLP7Lg';
+var YT_CH=[['Bloomberg',BB,'nocookie'],
+           ['Bloomberg',BB,'www']];
 var ytIdx=0,ytPlayer=null,ytTimer=null,ytOK=false,ytApiReady=false;
-function ytSrc(ch){return 'https://www.youtube-nocookie.com/embed/live_stream?channel='+ch+'&autoplay=1&mute=1&playsinline=1&rel=0&enablejsapi=1';}
+function ytSrc(e){var dom=(e[2]==='www')?'www.youtube.com':'www.youtube-nocookie.com';
+  return 'https://'+dom+'/embed/live_stream?channel='+e[1]+'&autoplay=1&mute=1&playsinline=1&rel=0&enablejsapi=1';}
 function ytLabel(){var el=document.querySelector('.vtl');if(el)el.innerHTML='<span class="yt">&#9654; YouTube LIVE</span> &bull; '+esc(YT_CH[ytIdx][0])+' Business News';}
 function ytBind(){ try{ ytPlayer=new YT.Player('tv',{events:{
   onStateChange:function(e){ if(e.data===1||e.data===3){ytOK=true;clearTimeout(ytTimer);} },
@@ -416,13 +417,17 @@ function ytBind(){ try{ ytPlayer=new YT.Player('tv',{events:{
 function ytLoad(){
   var box=$('vframe');if(!box)return;
   if(ytPlayer&&ytPlayer.destroy){try{ytPlayer.destroy();}catch(e){}}
-  box.innerHTML='<iframe id="tv" src="'+ytSrc(YT_CH[ytIdx][1])+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="origin-when-cross-origin"></iframe>';
+  box.innerHTML='<iframe id="tv" src="'+ytSrc(YT_CH[ytIdx])+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="origin-when-cross-origin"></iframe>';
   ytLabel();
   ytOK=false; clearTimeout(ytTimer);
   ytTimer=setTimeout(function(){ if(!ytOK) ytNext(); },9000);  /* no playback in 9s -> try next */
   if(ytApiReady) ytBind();
 }
-function ytNext(){ ytIdx=(ytIdx+1)%YT_CH.length; ytLoad(); }
+function ytNext(){
+  ytIdx++;
+  if(ytIdx>=YT_CH.length){ ytIdx=0; clearTimeout(ytTimer); ytTimer=setTimeout(ytLoad,45000); return; } /* all variants failed -> back off, then retry Bloomberg */
+  ytLoad();
+}
 window.onYouTubeIframeAPIReady=function(){ ytApiReady=true; ytBind(); };
 (function(){var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);})();
 ytLoad();

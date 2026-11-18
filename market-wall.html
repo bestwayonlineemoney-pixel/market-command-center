@@ -434,12 +434,29 @@ function ytNext(){
 }
 window.onYouTubeIframeAPIReady=function(){ ytApiReady=true; ytBind(); };
 (function(){var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);})();
-ytLoad();
-/* every 10 min: if stopped, reload; if on a fallback, re-test Bloomberg (preferred) */
-setInterval(function(){
-  if(!ytOK){ ytLoad(); }
-  else if(ytIdx>=2){ ytIdx=0; ytLoad(); }
-},10*60*1000);
+/* MANUAL override: wall-server.py injects a YouTube link here. If set, we embed
+   exactly that stream and skip the auto-fallback. */
+var MANUAL_VIDEO="__MANUAL_VIDEO__";
+function ytManualSrc(){
+  var u=(MANUAL_VIDEO||'').trim();
+  if(!u||u.charAt(0)==='_') return null;                 /* empty / unreplaced placeholder */
+  var ch=u.match(/channel\/(UC[\w-]+)/);
+  if(ch) return 'https://www.youtube-nocookie.com/embed/live_stream?channel='+ch[1]+'&autoplay=1&mute=1&playsinline=1&rel=0';
+  var v=(u.match(/[?&]v=([\w-]{11})/)||u.match(/youtu\.be\/([\w-]{11})/)||u.match(/embed\/([\w-]{11})/)||u.match(/^([\w-]{11})$/));
+  if(v) return 'https://www.youtube-nocookie.com/embed/'+v[1]+'?autoplay=1&mute=1&playsinline=1&rel=0';
+  return null;                                            /* unrecognised -> use auto feed */
+}
+(function(){
+  var ms=ytManualSrc();
+  if(ms){
+    var box=$('vframe'); if(box) box.innerHTML='<iframe id="tv" src="'+ms+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="origin-when-cross-origin"></iframe>';
+    var el=document.querySelector('.vtl'); if(el) el.innerHTML='<span class="yt">&#9654; YouTube LIVE</span> &bull; Live Stream';
+  }else{
+    ytLoad();
+    /* every 10 min: if stopped, reload; if on a fallback, re-test Bloomberg (preferred) */
+    setInterval(function(){ if(!ytOK){ ytLoad(); } else if(ytIdx>=2){ ytIdx=0; ytLoad(); } },10*60*1000);
+  }
+})();
 
 /* ---------------- clock + sessions ---------------- */
 var CITY=[['NY','America/New_York'],['LDN','Europe/London'],['TYO','Asia/Tokyo'],['SYD','Australia/Sydney']];

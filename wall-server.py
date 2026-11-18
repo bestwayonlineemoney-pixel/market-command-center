@@ -24,7 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 #    a short link      : "https://youtu.be/XXXXXXXXXXX"
 #    a channel's live  : "https://www.youtube.com/channel/UCxxxxxxxx/live"
 #  After editing, save and restart (run start-wall.bat again).
-MANUAL_VIDEO = ""
+MANUAL_VIDEO = "https://www.youtube.com/channel/UCIALMKvObZNtJ6AmdCLP7Lg/live"
 # ====================================================================
 
 def page_html():

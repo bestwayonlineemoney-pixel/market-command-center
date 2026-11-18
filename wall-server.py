@@ -32,16 +32,9 @@ def page_html():
     has one next to this script; otherwise use the copy embedded below. This lets
     the whole dashboard ship as a SINGLE file (wall-server.py) so there is no
     separate .html download for the browser's virus scanner to block."""
-    p = os.path.join(HERE, "market-wall.html")
-    data = None
-    try:
-        if os.path.isfile(p):
-            with open(p, "rb") as f:
-                data = f.read()
-    except Exception:
-        data = None
-    if data is None:
-        data = base64.b64decode(EMBED_HTML_B64)
+    # Always serve the embedded page so the delivered wall-server.py is the single
+    # source of truth (a stale market-wall.html left in the folder can't override it).
+    data = base64.b64decode(EMBED_HTML_B64)
     # inject the manual video choice (sanitised) into the page
     try:
         mv = (MANUAL_VIDEO or "").replace('"', "").replace("\\", "").strip()

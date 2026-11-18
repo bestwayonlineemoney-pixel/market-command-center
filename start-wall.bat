@@ -1,13 +1,17 @@
 @echo off
 REM ============================================================
 REM  Market Command Center - wall display launcher
-REM  Starts the local data server (wall-server.py) and opens
-REM  the dashboard fullscreen in Chrome.
-REM  Only wall-server.py is required in THIS folder (the dashboard page
-REM  is embedded inside it). An optional market-wall.html, if present, overrides it.
+REM  Only wall-server.py is required in THIS folder (the dashboard
+REM  page is embedded inside it). Run this file to start/refresh.
 REM ============================================================
 
 cd /d "%~dp0"
+
+REM --- stop any OLD server first, so the new wall-server.py always takes effect ---
+taskkill /f /im python.exe >nul 2>nul
+taskkill /f /im pythonw.exe >nul 2>nul
+taskkill /f /im py.exe >nul 2>nul
+timeout /t 1 /nobreak >nul
 
 REM --- start the data server (serves the page + live data) ---
 where python >nul 2>nul
@@ -23,5 +27,5 @@ timeout /t 2 /nobreak >nul
 REM --- open fullscreen in Chrome ---
 start chrome --kiosk --autoplay-policy=no-user-gesture-required "http://localhost:8750/"
 
-REM To close the display: press Alt+F4.  (Server keeps running in a minimized window.)
+REM To close the display: press Alt+F4.  (Server keeps running minimized.)
 exit

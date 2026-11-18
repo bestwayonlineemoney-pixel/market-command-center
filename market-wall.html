@@ -402,10 +402,14 @@ function setCbView(mode){
    Tries Bloomberg first; if a stream is unavailable / not embeddable / not live,
    the YouTube IFrame API fires onError (or it never starts within 9s) and we
    automatically rotate to the next 24/7 finance live channel. */
-/* Bloomberg only: try both embed domains and keep retrying Bloomberg's live stream */
+/* Bloomberg preferred: try Bloomberg (both embed domains) first; if its live is
+   down, fall back to another finance stream so the box is never blank. A periodic
+   check returns to Bloomberg as soon as its stream is live again. */
 var BB='UCIALMKvObZNtJ6AmdCLP7Lg';
 var YT_CH=[['Bloomberg',BB,'nocookie'],
-           ['Bloomberg',BB,'www']];
+           ['Bloomberg',BB,'www'],
+           ['Yahoo Finance','UCEAZeUIeJs0IjQiqTCdVSIg','nocookie'],
+           ['CNBC','UCrp_UI8XtuYfpiqluWLD7Lw','nocookie']];
 var ytIdx=0,ytPlayer=null,ytTimer=null,ytOK=false,ytApiReady=false;
 function ytSrc(e){var dom=(e[2]==='www')?'www.youtube.com':'www.youtube-nocookie.com';
   return 'https://'+dom+'/embed/live_stream?channel='+e[1]+'&autoplay=1&mute=1&playsinline=1&rel=0&enablejsapi=1';}
@@ -431,8 +435,11 @@ function ytNext(){
 window.onYouTubeIframeAPIReady=function(){ ytApiReady=true; ytBind(); };
 (function(){var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);})();
 ytLoad();
-/* re-check every 5 min: if somehow stopped, reload current source */
-setInterval(function(){ if(!ytOK) ytLoad(); },5*60*1000);
+/* every 10 min: if stopped, reload; if on a fallback, re-test Bloomberg (preferred) */
+setInterval(function(){
+  if(!ytOK){ ytLoad(); }
+  else if(ytIdx>=2){ ytIdx=0; ytLoad(); }
+},10*60*1000);
 
 /* ---------------- clock + sessions ---------------- */
 var CITY=[['NY','America/New_York'],['LDN','Europe/London'],['TYO','Asia/Tokyo'],['SYD','Australia/Sydney']];

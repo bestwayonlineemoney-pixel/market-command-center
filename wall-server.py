@@ -341,7 +341,7 @@ def events():
             d = datetime.strptime(ds, "%Y-%m-%d").date()
         except Exception:
             continue
-        if (today - d).days > 2:          # already finished
+        if d < today:                     # already passed -> hide (show today + upcoming only)
             continue
         key = (ds, (e.get("title") or "").lower())
         if key in seen:
@@ -493,6 +493,8 @@ class H(BaseHTTPRequestHandler):
             self._send(404, "not found", "text/plain")
         except Exception as e:
             self._json({"error": str(e)}, 500)
+
+
 
 
 

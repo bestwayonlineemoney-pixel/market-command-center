@@ -405,10 +405,12 @@ function setCbView(mode){
 /* Default to a finance live that actually works right now (Bloomberg's free live
    is currently down). Try Yahoo Finance, then CNBC, then Bloomberg; whichever is
    live & embeddable plays and stays. */
-var BB='UCIALMKvObZNtJ6AmdCLP7Lg';
-var YT_CH=[['Yahoo Finance','UCEAZeUIeJs0IjQiqTCdVSIg','nocookie'],
-           ['CNBC','UCrp_UI8XtuYfpiqluWLD7Lw','nocookie'],
+var BB='UCIALMKvObZNtJ6AmdCLP7Lg',YF='UCEAZeUIeJs0IjQiqTCdVSIg',CNB='UCrp_UI8XtuYfpiqluWLD7Lw';
+var YT_CH=[['Yahoo Finance',YF,'nocookie'],
+           ['CNBC',CNB,'nocookie'],
            ['Bloomberg',BB,'nocookie'],
+           ['Yahoo Finance',YF,'www'],
+           ['CNBC',CNB,'www'],
            ['Bloomberg',BB,'www']];
 var ytIdx=0,ytPlayer=null,ytTimer=null,ytOK=false,ytApiReady=false;
 function ytSrc(e){var dom=(e[2]==='www')?'www.youtube.com':'www.youtube-nocookie.com';
@@ -453,8 +455,9 @@ function ytManualSrc(){
     var el=document.querySelector('.vtl'); if(el) el.innerHTML='<span class="yt">&#9654; YouTube LIVE</span> &bull; Live Stream';
   }else{
     ytLoad();
-    /* every 10 min: if the stream has stopped, reload the current source */
-    setInterval(function(){ if(!ytOK) ytLoad(); },10*60*1000);
+    /* self-healing: every 3 min, if nothing is playing, restart the whole cascade
+       from the top so an unattended TV always recovers to a working stream */
+    setInterval(function(){ if(!ytOK){ ytIdx=0; ytLoad(); } },3*60*1000);
   }
 })();
 

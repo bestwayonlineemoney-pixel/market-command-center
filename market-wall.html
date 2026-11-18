@@ -285,8 +285,7 @@
         <div class="vtl"><span class="yt">&#9654; YouTube LIVE</span> &bull; Bloomberg Business News</div>
         <div class="vtr"><span class="d"></span>LIVE</div>
         <div class="vbr">BLOOMBERG <b>LIVE</b></div>
-        <iframe id="tv" src="https://www.youtube-nocookie.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=1&mute=1&playsinline=1&rel=0"
-          allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="origin-when-cross-origin"></iframe>
+        <div id="vframe" style="position:absolute;inset:0"></div>
         <div class="chyron">
           <div class="bk"><div class="tag">BREAKING NEWS</div><div class="scrollwrap"><div class="scroll" id="chyScroll"></div></div></div>
         </div>
@@ -398,6 +397,37 @@ function setCbView(mode){
   $('btnCbDark').className = 'mode-btn' + (mode==='dark' ? ' active' : '');
   $('btnCbSite').className = 'mode-btn' + (mode==='site' ? ' active' : '');
 }
+
+/* ---------------- live video with auto-fallback ----------------
+   Tries Bloomberg first; if a stream is unavailable / not embeddable / not live,
+   the YouTube IFrame API fires onError (or it never starts within 9s) and we
+   automatically rotate to the next 24/7 finance live channel. */
+var YT_CH=[['Bloomberg','UCIALMKvObZNtJ6AmdCLP7Lg'],
+           ['Yahoo Finance','UCEAZeUIeJs0IjQiqTCdVSIg'],
+           ['CNBC','UCrp_UI8XtuYfpiqluWLD7Lw'],
+           ['CNBC','UCvJJ_dzjViJCoLf5uKUTwoA']];
+var ytIdx=0,ytPlayer=null,ytTimer=null,ytOK=false,ytApiReady=false;
+function ytSrc(ch){return 'https://www.youtube-nocookie.com/embed/live_stream?channel='+ch+'&autoplay=1&mute=1&playsinline=1&rel=0&enablejsapi=1';}
+function ytLabel(){var el=document.querySelector('.vtl');if(el)el.innerHTML='<span class="yt">&#9654; YouTube LIVE</span> &bull; '+esc(YT_CH[ytIdx][0])+' Business News';}
+function ytBind(){ try{ ytPlayer=new YT.Player('tv',{events:{
+  onStateChange:function(e){ if(e.data===1||e.data===3){ytOK=true;clearTimeout(ytTimer);} },
+  onError:function(){ ytNext(); }
+}}); }catch(e){} }
+function ytLoad(){
+  var box=$('vframe');if(!box)return;
+  if(ytPlayer&&ytPlayer.destroy){try{ytPlayer.destroy();}catch(e){}}
+  box.innerHTML='<iframe id="tv" src="'+ytSrc(YT_CH[ytIdx][1])+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="origin-when-cross-origin"></iframe>';
+  ytLabel();
+  ytOK=false; clearTimeout(ytTimer);
+  ytTimer=setTimeout(function(){ if(!ytOK) ytNext(); },9000);  /* no playback in 9s -> try next */
+  if(ytApiReady) ytBind();
+}
+function ytNext(){ ytIdx=(ytIdx+1)%YT_CH.length; ytLoad(); }
+window.onYouTubeIframeAPIReady=function(){ ytApiReady=true; ytBind(); };
+(function(){var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);})();
+ytLoad();
+/* re-check every 5 min: if somehow stopped, reload current source */
+setInterval(function(){ if(!ytOK) ytLoad(); },5*60*1000);
 
 /* ---------------- clock + sessions ---------------- */
 var CITY=[['NY','America/New_York'],['LDN','Europe/London'],['TYO','Asia/Tokyo'],['SYD','Australia/Sydney']];
